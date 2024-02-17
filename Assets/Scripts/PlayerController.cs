@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb; 
     Animator anim;
     [SerializeField] private TouchingDirections touchingDirections;
+    [SerializeField] private TouchingGround touchingGround;
     public bool isFacingRight = true;
 
     private bool _isMoving = false;
@@ -40,6 +41,9 @@ public class PlayerController : MonoBehaviour
     private float dashTimer = 1f;
     [SerializeField]
     private TrailRenderer trail;
+    [SerializeField]
+    private float wallJumpDrift = 2f;
+
 
 
 
@@ -56,16 +60,25 @@ public class PlayerController : MonoBehaviour
         mvDirection = transform.position + mvDirection * walkSpeed * Time.deltaTime;
         transform.position = mvDirection;
         anim.SetFloat("y_velocity", rb.velocity.y);
-        if((GetComponent<AudioSource>().clip == Resources.Load<AudioClip>("30_Jump_03") || GetComponent<AudioSource>().clip == Resources.Load<AudioClip>("56_Attack_03")) && touchingDirections.isGround && !GetComponent<AudioSource>().isPlaying){
+        if((GetComponent<AudioSource>().clip == Resources.Load<AudioClip>("30_Jump_03") || GetComponent<AudioSource>().clip == Resources.Load<AudioClip>("56_Attack_03")) && touchingGround.isGround && !GetComponent<AudioSource>().isPlaying){
                 GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("45_Landing_01");
                 GetComponent<AudioSource>().Play();
             }
-        if(IsMoving && touchingDirections.isGround){
+        if(IsMoving && touchingGround.isGround){
             anim.SetBool("IsMoving",true);
             if(!GetComponent<AudioSource>().isPlaying){
                 GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("03_Step_grass_03");
                 GetComponent<AudioSource>().Play();
             } 
+        }
+
+        if(touchingDirections.isTouchingLeftWall || touchingDirections.isTouchingRightWall){
+            if(rb.velocity.y < 0){
+                rb.velocity = new Vector2(0,rb.velocity.y*0.9f);
+                anim.SetBool("IsOnWall",true);
+            }
+        }else{
+            anim.SetBool("IsOnWall",false);
         }
 
     }
@@ -88,19 +101,18 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context){
         if(context.performed && touchingDirections.isTouchingLeftWall || context.performed && touchingDirections.isTouchingRightWall){
-            if(touchingDirections.isTouchingRightWall){
-                rb.velocity = new Vector2(0,rb.velocity.y);
-                rb.AddForce(new Vector2(-jumpImpulse, 2f), ForceMode2D.Impulse);
-            }else{
-                rb.velocity = new Vector2(0,rb.velocity.y);
-                rb.AddForce(new Vector2(jumpImpulse, 2f), ForceMode2D.Impulse);
-            }
             anim.SetTrigger("Jump");
+            if(touchingDirections.isTouchingRightWall){
+                rb.velocity = new Vector2(-wallJumpDrift,jumpImpulse);
+            }else{
+                rb.velocity = new Vector2(wallJumpDrift,jumpImpulse);
+            }
+            
             GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("30_Jump_03");
             GetComponent<AudioSource>().Play();
             return;
         }
-        if(context.performed && touchingDirections.isGround){
+        if(context.performed && touchingGround.isGround){
             rb.velocity = new Vector2(rb.velocity.x, jumpImpulse);
             anim.SetTrigger("Jump");
             canDoubleJump = true;
@@ -108,7 +120,7 @@ public class PlayerController : MonoBehaviour
             GetComponent<AudioSource>().Play();
             
         }
-        if(canDoubleJump && !touchingDirections.isGround && context.performed){
+        if(canDoubleJump && !touchingGround.isGround && context.performed){
             rb.velocity = new Vector2(rb.velocity.x, doubleJumpImpulse);
             anim.SetTrigger("Jump");
             canDoubleJump = false;
@@ -132,7 +144,7 @@ public class PlayerController : MonoBehaviour
             Vector2 oldVelocity = rb.velocity;
             rb.velocity = new Vector2(transform.localScale.x * dashStr, 0);
             trail.emitting = true;
-            if(touchingDirections.isGround) anim.SetBool("IsMoving",true);
+            if(touchingGround.isGround) anim.SetBool("IsMoving",true);
             else anim.SetTrigger("Jump");
 
             yield return new WaitForSeconds(dashTimer);

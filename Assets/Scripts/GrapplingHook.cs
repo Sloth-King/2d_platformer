@@ -10,7 +10,7 @@ public class GrapplingHook : MonoBehaviour
     [SerializeField] private float grabDistance = 3f;
     [SerializeField] private GameObject line;
     private Vector3 desiredPosition = Vector3.zero;
-    [SerializeField] private TouchingDirections touchingDirections;
+    [SerializeField] private TouchingGround touchingGround;
     void Update()
     {
         GrappingHook();
@@ -39,7 +39,7 @@ public class GrapplingHook : MonoBehaviour
             StartCoroutine(Grab(desiredPosition));
         }
         //si le joueur lache la touche E alors qu'il est hook ou si le joueur est arrivé à destination
-        if (Input.GetKeyUp(KeyCode.E) && isHooking || transform.position == desiredPosition || touchingDirections.isGround)
+        if (Input.GetKeyUp(KeyCode.E) && isHooking || transform.position == desiredPosition || touchingGround.isGround)
         {
             isHooking = false;
             

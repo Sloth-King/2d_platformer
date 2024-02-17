@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7945702565639792904}
   m_Layer: 0
   m_Name: HitGround
-  m_TagString: Untagged
+  m_TagString: PlayerFeet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -94,8 +94,11 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
-  groundDistance: 0.05
+  groundDistance: 0.1
+  anim: {fileID: 3885005664976887227}
   _isGround: 0
+  isTouchingLeftWall: 0
+  isTouchingRightWall: 0
 --- !u!1 &6785133362109599577
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,7 +120,7 @@ GameObject:
   - component: {fileID: 2532960920322914838}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -238,6 +241,7 @@ MonoBehaviour:
   dashCd: 1.5
   dashTimer: 0.5
   trail: {fileID: 8339529295616488348}
+  wallJumpDrift: 2
 --- !u!114 &4258462302610033510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -574,7 +578,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 0.05
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -670,6 +674,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   isHooking: 0
+  isThrowing: 0
   grabDistance: 3
   line: {fileID: 0}
   touchingDirections: {fileID: 7945702565639792904}
