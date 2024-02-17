@@ -12,9 +12,12 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     GameObject camera;
 
+    private GrapplingHook grappingHook;
+
     private void Awake()
     {
         RespawnPoints.Add(spawnPoint);
+        grappingHook = GetComponent<GrapplingHook>();
     }
     void Update(){
         if(transform.position.y <= -37f){
@@ -42,6 +45,10 @@ public class PlayerManager : MonoBehaviour
             camera.SetActive(true);
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             rb.velocity = new Vector2(0, 0);
+            grappingHook.isHooking = false;
+            grappingHook.isThrowing = false;
+            grappingHook.target.SetActive(false);
+            grappingHook.line.SetActive(false);
         }
     }
     void OnTriggerExit2D(Collider2D other)

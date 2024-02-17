@@ -1,55 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GrapplingHook : MonoBehaviour
 {
-    [SerializeField] private GameObject target;
+    [SerializeField] public GameObject target;
     public bool isHooking = false;
     public bool isThrowing = false;
     [SerializeField] private float grabDistance = 3f;
-    [SerializeField] private GameObject line;
+    [SerializeField] public GameObject line;
     private Vector3 desiredPosition = Vector3.zero;
     [SerializeField] private TouchingGround touchingGround;
+
     void Update()
     {
-        GrappingHook();
-    }
-    void GrappingHook()
-    {
-        //Quand le joueur maintient la touche E il peut viser un point pour le grapin et lorsqu'il lache la touche E il est attiré vers le point visé
-        
-        //Attendre que le joueur appuie sur la touche E
-        if (Input.GetKeyDown(KeyCode.E) && !isHooking && !isThrowing)
-        {
-            isThrowing = true;
-            //Récupérer la position du point visé
-
-
-            target.transform.position = transform.position;
-
-            if(GetComponent<PlayerController>().isFacingRight)
-            {
-                desiredPosition = transform.position + new Vector3(grabDistance, grabDistance, 0);
-            }else
-            {
-                desiredPosition = transform.position + new Vector3(-grabDistance, grabDistance, 0);
-            }
-            desiredPosition.z = 0;
-            StartCoroutine(Grab(desiredPosition));
-        }
-        //si le joueur lache la touche E alors qu'il est hook ou si le joueur est arrivé à destination
-        if (Input.GetKeyUp(KeyCode.E) && isHooking || transform.position == desiredPosition || touchingGround.isGround)
+        if((transform.position == desiredPosition || touchingGround.isGround) && isHooking)
         {
             isHooking = false;
             
             target.SetActive(false);
             line.SetActive(false);
-        }else if(Input.GetKeyUp(KeyCode.E) && !isHooking && target.activeSelf)
-        {
-            isHooking = true;
         }
-        
 
         if(isHooking)
         {
@@ -70,10 +42,45 @@ public class GrapplingHook : MonoBehaviour
             //Réduire sa largeur
             line.GetComponent<LineRenderer>().startWidth = 0.1f;
             line.GetComponent<LineRenderer>().endWidth = 0.1f;
+        }
+    }
+    public void GrappingHook(InputAction.CallbackContext context)
+    {
+        
+        //If the player start to press the context button and is not already hooking or throwing we start the throwing process
+        if (context.started && !isHooking && !isThrowing)
+        {
+            isThrowing = true;
 
+            //We set the target position to the player position
+            target.transform.position = transform.position;
+
+            if(GetComponent<PlayerController>().isFacingRight)
+            {
+                desiredPosition = transform.position + new Vector3(grabDistance, grabDistance, 0);
+            }else
+            {
+                desiredPosition = transform.position + new Vector3(-grabDistance, grabDistance, 0);
+            }
+            desiredPosition.z = 0;
+            StartCoroutine(Grab(desiredPosition));
+        }
+        
+        //If the player release the context button and is hooking we stop the hooking process
+        if((context.canceled &&  isHooking))
+        {
+            isHooking = false;
+            
+            target.SetActive(false);
+            line.SetActive(false);
+        }else if(context.performed && !isHooking && target.activeSelf)
+        {
+            isHooking = true;
         }
     }
 
+
+    //Coroutine to move the target to the desired position
     IEnumerator Grab(Vector3 desiredPosition){
         RaycastHit2D hit;
         if(!line.activeSelf)
@@ -114,6 +121,7 @@ public class GrapplingHook : MonoBehaviour
 
     }
 
+    //Hide the line of the grappling hook
     void HideLine()
     {
         if(!isHooking)

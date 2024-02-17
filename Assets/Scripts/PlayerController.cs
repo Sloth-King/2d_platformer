@@ -45,20 +45,58 @@ public class PlayerController : MonoBehaviour
     private float wallJumpDrift = 2f;
 
 
+    public bool isWallJumping = false;
 
+    private PlayerInputActions playerInputActions;
+
+    private GrapplingHook grappingHook;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        grappingHook = GetComponent<GrapplingHook>();
+
+        //Setup Input System for controller
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Enable();
+        playerInputActions.Player.Jump.performed += OnJump;
+        playerInputActions.Player.Dash.performed += OnDash;
+        playerInputActions.Player.Grab.started += grappingHook.GrappingHook;
+        playerInputActions.Player.Grab.performed += grappingHook.GrappingHook;
+        playerInputActions.Player.Grab.canceled += grappingHook.GrappingHook;
     }
 
+    void Update()
+    {
+        //Check if the player is on the ground to reset isWallJumping
+        if(touchingGround.isGround){
+            isWallJumping = false;
+        }
+    }
     void FixedUpdate()
     {
-        //rb.velocity = new Vector2(moveInput.x * walkSpeed, moveInput.y);
+
+        //Replace the old OnMove method with this one for controller support
+        moveInput = playerInputActions.Player.Move.ReadValue<Vector2>();
+        IsMoving = moveInput != Vector2.zero;
+
+        //if the player is not wall jumping then change the facing direction
+        if(!isWallJumping)
+        FacingDirection(moveInput);
+
+
+        //if is moving is in the same direction then the current velocity than disable isWallJumping
+        if(isWallJumping && (moveInput.x > 0 && rb.velocity.x > 0 || moveInput.x < 0 && rb.velocity.x < 0)){
+            isWallJumping = false;
+        }
+
+        
         Vector3 mvDirection = new Vector3(moveInput.x,0, 0);
-        // Si le joueur appuie sur la touche de saut et qu'il peut sauter (il est sur le sol) alors il saute pendant que la touche est appuyée
-        mvDirection = transform.position + mvDirection * walkSpeed * Time.deltaTime;
-        transform.position = mvDirection;
+        //if the player is not wall jumping then move the player
+        if(!isWallJumping){
+            mvDirection = transform.position + mvDirection * walkSpeed * Time.deltaTime;
+            transform.position = mvDirection;
+        }
         anim.SetFloat("y_velocity", rb.velocity.y);
         if((GetComponent<AudioSource>().clip == Resources.Load<AudioClip>("30_Jump_03") || GetComponent<AudioSource>().clip == Resources.Load<AudioClip>("56_Attack_03")) && touchingGround.isGround && !GetComponent<AudioSource>().isPlaying){
                 GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("45_Landing_01");
@@ -72,10 +110,12 @@ public class PlayerController : MonoBehaviour
             } 
         }
 
+        //if the player is wall jumping then check if the player is touching the wall and if the player is moving in the opposite direction of the wall
         if(touchingDirections.isTouchingLeftWall || touchingDirections.isTouchingRightWall){
             if(rb.velocity.y < 0){
                 rb.velocity = new Vector2(0,rb.velocity.y*0.9f);
                 anim.SetBool("IsOnWall",true);
+                isWallJumping = false;
             }
         }else{
             anim.SetBool("IsOnWall",false);
@@ -93,25 +133,34 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //Not used anymore could be deleted
     public void OnMove(InputAction.CallbackContext context){
         moveInput = context.ReadValue<Vector2>();
+        Debug.Log(moveInput);
         IsMoving = moveInput != Vector2.zero;
         FacingDirection(moveInput);        
     }
 
     public void OnJump(InputAction.CallbackContext context){
+        //if the player is wall jumping then jump in the opposite direction of the wall
         if(context.performed && touchingDirections.isTouchingLeftWall || context.performed && touchingDirections.isTouchingRightWall){
             anim.SetTrigger("Jump");
+            isWallJumping = true;
             if(touchingDirections.isTouchingRightWall){
                 rb.velocity = new Vector2(-wallJumpDrift,jumpImpulse);
+                FacingDirection(new Vector2(-1,0));
             }else{
                 rb.velocity = new Vector2(wallJumpDrift,jumpImpulse);
+                FacingDirection(new Vector2(1,0));
             }
-            
+            FacingDirection(rb.velocity);
             GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("30_Jump_03");
             GetComponent<AudioSource>().Play();
+            Invoke("ResetWallJump",0.8f);
             return;
         }
+
+        //if the player is not wall jumping then jump normally
         if(context.performed && touchingGround.isGround){
             rb.velocity = new Vector2(rb.velocity.x, jumpImpulse);
             anim.SetTrigger("Jump");
@@ -120,6 +169,8 @@ public class PlayerController : MonoBehaviour
             GetComponent<AudioSource>().Play();
             
         }
+
+        //if the player is not wall jumping then double jump
         if(canDoubleJump && !touchingGround.isGround && context.performed){
             rb.velocity = new Vector2(rb.velocity.x, doubleJumpImpulse);
             anim.SetTrigger("Jump");
@@ -157,6 +208,8 @@ public class PlayerController : MonoBehaviour
             canDash = true;
         }
     }
+
+    //Reset the double jump after a certain amount of time
     void ResetDoubleJump(){
         canDoubleJump = true;
     }
@@ -166,6 +219,11 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Dash(context));
             canDash = false;
         }
+    }
+
+    //Reset the wall jump after a certain amount of time
+    void ResetWallJump(){
+        isWallJumping = false;
     }
 
 }

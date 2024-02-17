@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 527014038081623311}
   - component: {fileID: 5661267628844563697}
-  - component: {fileID: 7945702565639792904}
+  - component: {fileID: 4959496039479247883}
   m_Layer: 0
   m_Name: HitGround
   m_TagString: PlayerFeet
@@ -68,7 +68,7 @@ CircleCollider2D:
   m_Offset: {x: -0.2960596, y: 0.09062147}
   serializedVersion: 2
   m_Radius: 0.11331892
---- !u!114 &7945702565639792904
+--- !u!114 &4959496039479247883
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -77,28 +77,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 900207020814552612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2cb23e7d497f8488aa34d964b3a111, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ca01731f09c8f34294b94185bac4f69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  contactFilter:
-    useTriggers: 0
-    useLayerMask: 0
-    useDepth: 0
-    useOutsideDepth: 0
-    useNormalAngle: 0
-    useOutsideNormalAngle: 0
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 0
-    minDepth: 0
-    maxDepth: 0
-    minNormalAngle: 0
-    maxNormalAngle: 0
-  groundDistance: 0.1
   anim: {fileID: 3885005664976887227}
   _isGround: 0
-  isTouchingLeftWall: 0
-  isTouchingRightWall: 0
 --- !u!1 &6785133362109599577
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,13 +94,13 @@ GameObject:
   - component: {fileID: 582635854531808112}
   - component: {fileID: 401560551809877483}
   - component: {fileID: 7048415544571092896}
-  - component: {fileID: 4258462302610033510}
   - component: {fileID: 3885005664976887227}
   - component: {fileID: 3431095607500499681}
   - component: {fileID: 8339529295616488348}
   - component: {fileID: 4986585151422427904}
   - component: {fileID: 6665106378188541232}
   - component: {fileID: 2532960920322914838}
+  - component: {fileID: 425969236288191950}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -232,7 +215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b06076036400014ebe9bb9b39309f05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchingDirections: {fileID: 7945702565639792904}
+  touchingDirections: {fileID: 425969236288191950}
+  touchingGround: {fileID: 4959496039479247883}
   isFacingRight: 1
   walkSpeed: 8
   jumpImpulse: 10
@@ -242,136 +226,7 @@ MonoBehaviour:
   dashTimer: 0.5
   trail: {fileID: 8339529295616488348}
   wallJumpDrift: 2
---- !u!114 &4258462302610033510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6785133362109599577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 0f5bfee7cbcc94b4fbf07914c7465f0c, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7048415544571092896}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnMove
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 8f7d7e34-469d-4e3b-bd7a-af039543bbba
-    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7048415544571092896}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnJump
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 3b94d8eb-3210-48eb-a1f9-586b87e1d353
-    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: b49a81aa-8484-48ff-9009-57a4681dd076
-    m_ActionName: UI/Submit[/Keyboard/enter]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: a4efe854-5fae-4576-94b0-c54c479e3c5d
-    m_ActionName: UI/Cancel[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 2ed7b794-65e7-429f-bb37-b4083cdb138e
-    m_ActionName: UI/Point[/Mouse/position]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 031cd3dd-44db-4409-988f-a9573119c7e9
-    m_ActionName: UI/Click[/Mouse/leftButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 65670b3b-b4c2-45c8-a4af-3273702a180f
-    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 3d1d2d5e-d211-42c1-a840-7896e7c7120c
-    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 7981dd86-3efd-4fd2-9e61-de0574bbbea5
-    m_ActionName: UI/RightClick[/Mouse/rightButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: c31f733d-29c8-43b6-9726-a39925f34a24
-    m_ActionName: UI/TrackedDevicePosition
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 19931c8b-c4cc-4d9a-9743-c7161ee03fa4
-    m_ActionName: UI/TrackedDeviceOrientation
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7048415544571092896}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnJump
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 2d5312e2-525b-40e7-ae6e-a43414ed880b
-    m_ActionName: Player/Jump[/Keyboard/w,/Keyboard/upArrow,/Keyboard/space]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7048415544571092896}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnDash
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 1e7e7c81-64b7-47a6-a64d-0aa8753c7f70
-    m_ActionName: Player/Dash[/Keyboard/shift]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  isWallJumping: 0
 --- !u!95 &3885005664976887227
 Animator:
   serializedVersion: 5
@@ -677,4 +532,33 @@ MonoBehaviour:
   isThrowing: 0
   grabDistance: 3
   line: {fileID: 0}
-  touchingDirections: {fileID: 7945702565639792904}
+  touchingGround: {fileID: 4959496039479247883}
+--- !u!114 &425969236288191950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6785133362109599577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa2cb23e7d497f8488aa34d964b3a111, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contactFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  groundDistance: 0.48
+  isTouchingLeftWall: 0
+  isTouchingRightWall: 0
