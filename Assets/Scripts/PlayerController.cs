@@ -8,7 +8,8 @@ public class PlayerController : MonoBehaviour
     Vector2 moveInput;
     Rigidbody2D rb; 
     Animator anim;
-    TouchingDirections touchingDirections;
+    [SerializeField] private TouchingDirections touchingDirections;
+    public bool isFacingRight = true;
 
     private bool _isMoving = false;
 
@@ -41,10 +42,10 @@ public class PlayerController : MonoBehaviour
     private TrailRenderer trail;
 
 
+
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        touchingDirections = GetComponent<TouchingDirections>();
     }
 
     void FixedUpdate()
@@ -72,8 +73,10 @@ public class PlayerController : MonoBehaviour
     void FacingDirection(Vector2 moveInput){
         if(moveInput.x > 0){
             transform.localScale = new Vector3(1,1,1);
+            isFacingRight = true;
         }else if(moveInput.x < 0){
             transform.localScale = new Vector3(-1,1,1);
+            isFacingRight = false;
         }
     }
 
@@ -84,7 +87,19 @@ public class PlayerController : MonoBehaviour
     }
 
     public void OnJump(InputAction.CallbackContext context){
-        //TODO check if alive and not using ability
+        if(context.performed && touchingDirections.isTouchingLeftWall || context.performed && touchingDirections.isTouchingRightWall){
+            if(touchingDirections.isTouchingRightWall){
+                rb.velocity = new Vector2(0,rb.velocity.y);
+                rb.AddForce(new Vector2(-jumpImpulse, 2f), ForceMode2D.Impulse);
+            }else{
+                rb.velocity = new Vector2(0,rb.velocity.y);
+                rb.AddForce(new Vector2(jumpImpulse, 2f), ForceMode2D.Impulse);
+            }
+            anim.SetTrigger("Jump");
+            GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("30_Jump_03");
+            GetComponent<AudioSource>().Play();
+            return;
+        }
         if(context.performed && touchingDirections.isGround){
             rb.velocity = new Vector2(rb.velocity.x, jumpImpulse);
             anim.SetTrigger("Jump");
@@ -99,7 +114,6 @@ public class PlayerController : MonoBehaviour
             canDoubleJump = false;
             GetComponent<AudioSource>().clip = Resources.Load<AudioClip>("30_Jump_03");
             GetComponent<AudioSource>().Play();
-
         }
     }
 
@@ -136,7 +150,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void OnDash(InputAction.CallbackContext context){
-        if(context.performed && canDash){
+        if(context.performed && canDash && !GetComponent<GrapplingHook>().isHooking){
             StartCoroutine(Dash(context));
             canDash = false;
         }

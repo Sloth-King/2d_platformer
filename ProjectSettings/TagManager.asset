@@ -7,11 +7,14 @@ TagManager:
   - HedgehogLim
   - Enemy
   - MoonLevel
+  - Ground
+  - Mushroom
+  - PlayerFeet
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 
@@ -44,6 +47,15 @@ TagManager:
   - name: Background
     uniqueID: 1334816723
     locked: 0
+  - name: BackdropDesign
+    uniqueID: 1324254149
+    locked: 0
+  - name: HalfForeground
+    uniqueID: 1843097823
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Foreground
+    uniqueID: 2244404823
     locked: 0

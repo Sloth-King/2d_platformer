@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
         RespawnPoints.Add(spawnPoint);
     }
     void Update(){
-        if(transform.position.y <= -20f){
+        if(transform.position.y <= -37f){
             camera.SetActive(false);
         }
     }
