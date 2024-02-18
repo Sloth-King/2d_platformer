@@ -10,6 +10,7 @@ TagManager:
   - Ground
   - Mushroom
   - PlayerFeet
+  - Limit
   layers:
   - Default
   - TransparentFX

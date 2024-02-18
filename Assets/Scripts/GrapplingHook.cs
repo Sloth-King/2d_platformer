@@ -13,6 +13,8 @@ public class GrapplingHook : MonoBehaviour
     private Vector3 desiredPosition = Vector3.zero;
     [SerializeField] private TouchingGround touchingGround;
 
+    Vector3 distanceBetweenHitAndItemGrabbed;
+    private GameObject itemGrabbed;
     void Update()
     {
         if((transform.position == desiredPosition || touchingGround.isGround) && isHooking)
@@ -25,6 +27,8 @@ public class GrapplingHook : MonoBehaviour
 
         if(isHooking)
         {
+            desiredPosition = itemGrabbed.transform.position + distanceBetweenHitAndItemGrabbed;
+            target.transform.position = Vector3.MoveTowards(target.transform.position, desiredPosition, 0.5f);
             if (Input.mouseScrollDelta.y > 0)
             {
                 transform.position = Vector3.MoveTowards(transform.position, desiredPosition, 0.1f);
@@ -99,7 +103,11 @@ public class GrapplingHook : MonoBehaviour
             if (hit.collider != null && hit.collider.gameObject != gameObject && hit.collider.gameObject.CompareTag("Ground"))
             {
                 isHooking = true;
+                itemGrabbed = hit.collider.gameObject;
+                //Desired position is the point of impact of the obstacle in reference of itemGrabbed
                 desiredPosition = hit.point;
+                distanceBetweenHitAndItemGrabbed = desiredPosition - itemGrabbed.transform.position;
+
             }
 
             yield return new WaitForSeconds(0.005f);
